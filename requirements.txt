@@ -1,8 +1,9 @@
-sqlalchemy>=2.0.30
+sqlalchemy==2.0.30
 requests==2.31.0
 feedparser==6.0.11
 yfinance==0.2.38
 thefuzz==0.22.1
+# python-Levenshtein==0.25.1 - incompatible with Python 3.13, thefuzz uses rapidfuzz instead
 networkx==3.3
 click==8.1.7
 flask==3.0.3

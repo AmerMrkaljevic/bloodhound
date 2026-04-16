@@ -60,7 +60,10 @@ class NewsCollector(BaseCollector):
             for ticker in tickers:
                 try:
                     url = YAHOO_FINANCE_RSS.format(ticker=ticker)
-                    results.extend(self.fetch_feed(url))
+                    events = self.fetch_feed(url)
+                    for e in events:
+                        e["ticker"] = ticker
+                    results.extend(events)
                 except Exception:
                     continue
         return results

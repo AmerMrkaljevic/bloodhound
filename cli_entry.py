@@ -36,7 +36,13 @@ def collect(source, db):
 
         if source in ("news", "all"):
             click.echo("Collecting news events...")
-            events = NewsCollector().collect()
+            from sqlalchemy import select
+            from db.database import Company
+            known_tickers = [
+                c.ticker for c in session.execute(select(Company)).scalars().all()
+                if c.ticker
+            ]
+            events = NewsCollector().collect(tickers=known_tickers)
             for e in events:
                 try:
                     norm.ingest_news_event(e)

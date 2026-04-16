@@ -86,8 +86,22 @@ class SecCollector(BaseCollector):
             for e in feed.entries
         ]
 
+    def _resolve_xml_url(self, filing_url: str) -> str:
+        """Convert an index page URL to the actual Form 4 XML URL."""
+        if not filing_url.endswith("-index.htm"):
+            return filing_url
+        import re
+        base = filing_url.rsplit("/", 1)[0] + "/"
+        resp = requests.get(base, headers=HEADERS, timeout=30)
+        resp.raise_for_status()
+        xmls = re.findall(r'href="(/Archives/[^"]+\.xml)"', resp.text)
+        if not xmls:
+            return filing_url
+        return "https://www.sec.gov" + xmls[0]
+
     def fetch_filing_xml(self, filing_url: str) -> str:
-        resp = requests.get(filing_url, headers=HEADERS, timeout=30)
+        xml_url = self._resolve_xml_url(filing_url)
+        resp = requests.get(xml_url, headers=HEADERS, timeout=30)
         resp.raise_for_status()
         return resp.text
 

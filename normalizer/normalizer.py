@@ -49,8 +49,10 @@ class Normalizer:
         return company
 
     def ingest_trade(self, record: dict[str, Any]) -> Trade:
-        trader = self._get_or_create_trader(record["owner_name"])
-        company = self._get_or_create_company(record["issuer_name"], record.get("ticker", ""))
+        owner_name = record.get("owner_name") or "Unknown"
+        issuer_name = record.get("issuer_name") or "Unknown"
+        trader = self._get_or_create_trader(owner_name)
+        company = self._get_or_create_company(issuer_name, record.get("ticker", ""))
         trade = Trade(
             trader_id=trader.id,
             company_id=company.id,
